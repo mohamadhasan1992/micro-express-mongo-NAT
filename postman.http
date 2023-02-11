@@ -1,0 +1,25 @@
+#####
+GET http://localhost:30773
+Content-Type: application/json
+
+{
+}
+
+
+#####
+POST http://localhost:30773/api/users/signup
+Content-Type: application/json
+
+{
+    "email": "tabrizi.mohamadhassan@yahoo.com",
+    "password": "1234week"
+}
+
+#####
+GET http://localhost:30773/hello
+Content-Type: application/json
+
+{
+    "email": "tabrizi.mohamadhassan@yahoo.com",
+    "password": "1234week"
+}
