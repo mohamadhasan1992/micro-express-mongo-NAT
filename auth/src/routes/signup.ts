@@ -1,6 +1,9 @@
-import express, {Request, Response} from "express";
+import express, {NextFunction, Request, Response} from "express";
 import {body, validationResult} from "express-validator";
+import { BadRequestError } from "../errors/bad-request-error";
 import { RequestValidationError } from "../errors/request-validation-error";
+import { User } from "../models/user";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -13,14 +16,32 @@ router.post("/api/users/signup", [
         .trim()
         .isLength({min: 4, max:20})
         .withMessage('password is not stromg!'),
-], (req: Request ,res: Response) => {
+], async (req: Request ,res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
-        throw new RequestValidationError(errors.array())
+        return next(new RequestValidationError(errors.array()))
     }
     const {email, password} = req.body;
-    
-    res.send({})
+    const existingUser = await User.findOne({email});
+
+    if(existingUser){
+        return next(new BadRequestError('Email in use!'))
+    }
+    const user = User.build({email, password});
+    await user.save();
+    // jwt
+    const userJwt = jwt.sign({
+        id: user.id,
+        email: user.email
+    }, 
+        process.env.JWT_KEY!
+    );
+    // add session
+    req.session = {
+        jwt: userJwt
+    };
+
+    res.status(201).send(user)
 })
 
 

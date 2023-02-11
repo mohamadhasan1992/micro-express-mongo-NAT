@@ -1,10 +1,15 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
+import cookieSession from "cookie-session";
+
+
 
 const router = express.Router();
 
 
-router.post("/api/users/signout", (req,res) => {
-    res.send("hi there")
+router.get("/api/users/signout", (req: Request,res: Response, next:NextFunction) => {
+    // clear cookie
+    req.session = null;
+    res.send({})
 })
 
 
