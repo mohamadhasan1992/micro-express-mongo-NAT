@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
-import { CurrentUser } from "../middlewares/current-user";
-import { requireAuth } from "../middlewares/require-auth";
+import { CurrentUser } from "@microtickets_mh/common";
+import { requireAuth } from "@microtickets_mh/common";
 
 const router = express.Router();
 
