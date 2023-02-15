@@ -2,6 +2,8 @@ import express, { NextFunction, Request, Response }  from "express";
 import {requireAuth, validateRequest} from "@microtickets_mh/common";
 import { body } from "express-validator";
 import { Ticket } from "../models/ticket";
+import { TicketCreatedPublisher } from "../events/publishers/ticket-created-publisher";
+import {natsWrapper} from "../nats-wrapper";
 
 const router = express.Router();
 
@@ -25,6 +27,13 @@ async(req: Request,res: Response,next: NextFunction) => {
         userId: req.currentUser!.id
     }); 
     await newTicket.save();
+    // publish event
+    await new TicketCreatedPublisher(natsWrapper.client).publish({
+        id: newTicket.id,
+        title: newTicket.title,
+        price: newTicket.price,
+        userId: newTicket.userId
+    });
     res.status(201).send(newTicket);
 })
 

@@ -6,7 +6,7 @@ export default ({ req }) => {
 
     return axios.create({
       // baseURL: 'http://ingress-nginx.ingress-nginx.svc.cluster.local',
-      baseURL: 'http://localhost:3000',
+      baseURL: 'http://auth-srv:3000',
       headers: req.headers
     });
   } else {
