@@ -43,8 +43,8 @@ router.post('/api/orders',
                 ticket
             })
             await newOrder.save()
-            // publish an event order:created
             
+            // publish an event order:created
             res.status(201).send(newOrder);
     });
 

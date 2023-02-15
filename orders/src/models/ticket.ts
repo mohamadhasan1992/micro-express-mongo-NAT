@@ -48,11 +48,7 @@ TicketSchmea.methods.isReserved = async function(){
     const existingOrders = await Order.findOne({
         ticket: this,
         status: {
-            $in: [
-                OrderStatus.Created,
-                OrderStatus.AwaitningPayment,
-                OrderStatus.Complete,
-            ]
+            $nin: OrderStatus.Cancelled
         }
     })
     return !!existingOrders;
