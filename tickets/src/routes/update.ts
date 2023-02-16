@@ -1,4 +1,4 @@
-import { NotAuthorizedError, NotFoundError, requireAuth, validateRequest } from "@microtickets_mh/common";
+import { BadRequestError, NotAuthorizedError, NotFoundError, requireAuth, validateRequest } from "@microtickets_mh/common";
 import express, { NextFunction, Request, Response } from "express";
 import { body } from "express-validator";
 import { Ticket } from "../models/ticket";
@@ -26,6 +26,9 @@ async(req: Request,res: Response,next:NextFunction) => {
     let ticket = await Ticket.findById(req.params.id);
     if(!ticket){
         return next(new NotFoundError())
+    }
+    if(ticket.orderId){
+        return next(new BadRequestError('ticket is already taken!'))
     }
     if(ticket.userId !== req.currentUser!.id){
         return next(new NotAuthorizedError())
