@@ -11,11 +11,10 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent>{
     async onMessage(data: TicketUpdatedEvent['data'], msg: Message) {
 
         // check for version for concurrency
-        const ticket = await Ticket.findOne({_id: data.id, version: data.version - 1});
+        const ticket = await Ticket.findByEvent(data);
         if(!ticket){
             throw new Error('Tickets not Found!')
         }
-
         const {title, price} = data;
         ticket.set({title, price});
         await ticket.save();

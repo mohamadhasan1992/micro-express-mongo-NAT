@@ -19,9 +19,10 @@ interface TicketDoc extends mongoose.Document{
 
 interface TicketModel extends mongoose.Model<TicketDoc>{
     build(attrs: TicketAttrs): TicketDoc;
+    findByEvent(event: {id: string, version: number}) : Promise<TicketDoc | null>;
 }
 
-const TicketSchmea = new mongoose.Schema({
+const ticketSchmea = new mongoose.Schema({
     title: {
         type: String,
         required: true,
@@ -41,18 +42,20 @@ const TicketSchmea = new mongoose.Schema({
     }
 });
 
-
-TicketSchmea.set('versionKey', "version");
-TicketSchmea.plugin(updateIfCurrentPlugin);
-TicketSchmea.statics.build = (attrs: TicketAttrs) => {
+ticketSchmea.set('versionKey', "version");
+ticketSchmea.plugin(updateIfCurrentPlugin);
+ticketSchmea.statics.build = (attrs: TicketAttrs) => {
     return new Ticket({
         _id: attrs.id,
         title: attrs.title,
         price: attrs.price,
     })
 }
+ticketSchmea.statics.findByEvent = async (event: {id: string, version: number}) => {
+    return await Ticket.findOne({_id: event.id, version: event.version - 1})
+}
 
-TicketSchmea.methods.isReserved = async function(){
+ticketSchmea.methods.isReserved = async function(){
     const existingOrders = await Order.findOne({
         ticket: this,
         status: {
@@ -62,7 +65,7 @@ TicketSchmea.methods.isReserved = async function(){
     return !!existingOrders;
 }
 
-const Ticket = mongoose.model<TicketDoc, TicketModel>("Ticket", TicketSchmea);
+const Ticket = mongoose.model<TicketDoc, TicketModel>("Ticket", ticketSchmea);
 
 
 export {Ticket, TicketDoc}

@@ -13,7 +13,7 @@ export class TicketCreatedListener extends Listener<TicketCreatedEvent>{
             title, price, id
         });
         await ticket.save();
-
+        console.log('ticket saved')
         msg.ack();
     }
 }

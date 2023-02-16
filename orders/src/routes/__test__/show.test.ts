@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
 import { Ticket } from "../../models/ticket";
@@ -7,6 +8,7 @@ it.todo('return 404 if order not dound')
 it('fetech ticket', async() => {
     // create ticket
     const ticket = Ticket.build({
+        id: new mongoose.Types.ObjectId().toHexString(),
         title: 'concert',
         price: 20
     });
@@ -33,6 +35,7 @@ it('retursn 401 if user request another users order', async() => {
     // create ticket
     // create ticket
     const ticket = Ticket.build({
+        id: new mongoose.Types.ObjectId().toHexString(),
         title: 'concert',
         price: 20
     });
