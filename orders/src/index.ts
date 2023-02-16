@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 import "express-errors";
 import { app } from "./app";
 import { natsWrapper } from "./nats-wrapper";
+import { TicketCreatedListener } from "./events/listeners/ticket-created-listener";
+import { TicketUpdatedListener } from "./events/listeners/ticket-updated-listener";
+
 
 // connecting to mongo
 const startDb = async() => {
@@ -27,6 +30,11 @@ const startDb = async() => {
             console.log('Nats connection closed');
             process.exit();
         });
+
+        new TicketCreatedListener(natsWrapper.client).listen();
+        new TicketUpdatedListener(natsWrapper.client).listen();
+
+
         await mongoose.connect(process.env.MONGO_URL);
         console.log('tickets-DB connection successed')
     }catch(err){

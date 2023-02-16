@@ -32,7 +32,8 @@ async(req: Request,res: Response,next: NextFunction) => {
         id: newTicket.id,
         title: newTicket.title,
         price: newTicket.price,
-        userId: newTicket.userId
+        userId: newTicket.userId,
+        version: newTicket.version
     });
     res.status(201).send(newTicket);
 })

@@ -1,9 +1,11 @@
 import { OrderStatus } from "@microtickets_mh/common";
 import mongoose from "mongoose";
 import { Order } from "./order";
+import {updateIfCurrentPlugin} from "mongoose-update-if-current";
 
 
 interface TicketAttrs {
+    id: string;
     title: string;
     price: number;
 }
@@ -11,6 +13,7 @@ interface TicketAttrs {
 interface TicketDoc extends mongoose.Document{
     title: string;
     price: number;
+    version: number;
     isReserved(): Promise<boolean>
 }
 
@@ -39,9 +42,14 @@ const TicketSchmea = new mongoose.Schema({
 });
 
 
-
+TicketSchmea.set('versionKey', "version");
+TicketSchmea.plugin(updateIfCurrentPlugin);
 TicketSchmea.statics.build = (attrs: TicketAttrs) => {
-    return new Ticket(attrs)
+    return new Ticket({
+        _id: attrs.id,
+        title: attrs.title,
+        price: attrs.price,
+    })
 }
 
 TicketSchmea.methods.isReserved = async function(){

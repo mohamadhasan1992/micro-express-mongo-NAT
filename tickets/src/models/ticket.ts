@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import {updateIfCurrentPlugin} from "mongoose-update-if-current";
 
 
 interface TicketAttrs {
@@ -16,7 +17,8 @@ interface TicketDoc extends mongoose.Document{
     price: number;
     userId: string;
     createdAt: string;
-    updatedAt: string
+    updatedAt: string;
+    version: number;
 }
 
 const ticketSchema = new mongoose.Schema({
@@ -42,6 +44,8 @@ const ticketSchema = new mongoose.Schema({
         } 
     }
 });
+ticketSchema.set('versionKey', 'version');
+ticketSchema.plugin(updateIfCurrentPlugin);
 
 
 // add typescript to model
