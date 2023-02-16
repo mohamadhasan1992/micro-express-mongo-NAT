@@ -1,3 +1,4 @@
+import { OrderCreatedListener } from "./events/listeners/order-created-listener";
 import { natsWrapper } from "./nats-wrapper";
 
 // connecting to mongo
@@ -19,7 +20,7 @@ const startDb = async() => {
             console.log('Nats connection closed');
             process.exit();
         });
-
+        new OrderCreatedListener(natsWrapper.client).listen();
     }catch(err){
         console.log(err)
     }
